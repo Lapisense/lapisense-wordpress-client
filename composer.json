@@ -1,0 +1,15 @@
+{
+    "name": "lapisense/wordpress-client",
+    "description": "WordPress client for the Lapisense licensing API",
+    "type": "library",
+    "license": "MIT",
+    "require": {
+        "php": ">=7.4",
+        "lapisense/php-client": "^1.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Lapisense\\WordPressClient\\": "src/"
+        }
+    }
+}
