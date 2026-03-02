@@ -51,4 +51,40 @@ final class OptionStorage implements StorageInterface
     {
         delete_option($this->prefix . $key);
     }
+
+    /**
+     * @return string|null
+     */
+    public function getLicenseKey()
+    {
+        return $this->get('license_key');
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getActivationUuid()
+    {
+        return $this->get('activation_uuid');
+    }
+
+    /**
+     * @param string $licenseKey
+     * @param string $activationUuid
+     * @return void
+     */
+    public function store($licenseKey, $activationUuid)
+    {
+        $this->set('license_key', $licenseKey);
+        $this->set('activation_uuid', $activationUuid);
+    }
+
+    /**
+     * @return void
+     */
+    public function clear()
+    {
+        $this->delete('license_key');
+        $this->delete('activation_uuid');
+    }
 }

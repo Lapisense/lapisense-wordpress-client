@@ -79,11 +79,8 @@ final class Client
 
         $result = $this->apiClient->activate($licenseKey, home_url());
 
-        if ($result && !empty($result['success'])) {
-            $this->storage->set('license_key', $licenseKey);
-            if (!empty($result['activation']['uuid'])) {
-                $this->storage->set('activation_uuid', $result['activation']['uuid']);
-            }
+        if ($result && !empty($result['success']) && !empty($result['activation']['uuid'])) {
+            $this->storage->store($licenseKey, $result['activation']['uuid']);
         }
 
         return $result ?: array();
@@ -99,7 +96,7 @@ final class Client
     {
         $this->requireLicensed();
 
-        $activationUuid = $this->storage->get('activation_uuid');
+        $activationUuid = $this->storage->getActivationUuid();
         if (!$activationUuid) {
             return false;
         }
@@ -107,8 +104,7 @@ final class Client
         $result = $this->apiClient->deactivate($activationUuid);
 
         if ($result && !empty($result['success'])) {
-            $this->storage->delete('activation_uuid');
-            $this->storage->delete('license_key');
+            $this->storage->clear();
             return true;
         }
 
@@ -124,7 +120,7 @@ final class Client
     public function isActivated()
     {
         $this->requireLicensed();
-        return $this->storage->get('activation_uuid') !== null;
+        return $this->storage->getActivationUuid() !== null;
     }
 
     /**
@@ -138,9 +134,9 @@ final class Client
         $this->requireLicensed();
 
         return array(
-            'activated'       => $this->storage->get('activation_uuid') !== null,
-            'activation_uuid' => $this->storage->get('activation_uuid'),
-            'license_key'     => $this->storage->get('license_key'),
+            'activated'       => $this->storage->getActivationUuid() !== null,
+            'activation_uuid' => $this->storage->getActivationUuid(),
+            'license_key'     => $this->storage->getLicenseKey(),
         );
     }
 
