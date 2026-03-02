@@ -19,7 +19,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Lapisense\\WordPressClient\\Tests\\": "tests/"
+            "Lapisense\\WordPressClient\\Tests\\Unit\\": "tests/unit/"
         }
     },
     "require-dev": {
