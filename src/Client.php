@@ -3,6 +3,7 @@
 namespace Lapisense\WordPressClient;
 
 use Lapisense\PHPClient\ApiClient;
+use LogicException;
 
 /**
  * Developer-facing entry point for the Lapisense WordPress client.
@@ -70,7 +71,7 @@ final class Client
      *
      * @param string $licenseKey
      * @return array<string, mixed>
-     * @throws \LogicException If product is free.
+     * @throws LogicException If product is free.
      */
     public function activate($licenseKey)
     {
@@ -92,7 +93,7 @@ final class Client
      * Deactivate the current activation.
      *
      * @return bool
-     * @throws \LogicException If product is free.
+     * @throws LogicException If product is free.
      */
     public function deactivate()
     {
@@ -118,7 +119,7 @@ final class Client
      * Check if a license is activated.
      *
      * @return bool
-     * @throws \LogicException If product is free.
+     * @throws LogicException If product is free.
      */
     public function isActivated()
     {
@@ -130,7 +131,7 @@ final class Client
      * Get the current activation status.
      *
      * @return array<string, mixed>
-     * @throws \LogicException If product is free.
+     * @throws LogicException If product is free.
      */
     public function getActivationStatus()
     {
@@ -145,6 +146,8 @@ final class Client
 
     /**
      * @return void
+     *
+     * @SuppressWarnings(PHPMD.UnusedPrivateMethod) Called from static init().
      */
     private function registerHooks()
     {
@@ -153,23 +156,24 @@ final class Client
         if ($productType === 'theme') {
             $updater = new ThemeUpdater($this->config, $this->apiClient, $this->storage);
             $updater->register();
-        } else {
-            $updater = new PluginUpdater($this->config, $this->apiClient, $this->storage);
-            $updater->register();
-
-            $productInfo = new ProductInfo($this->config, $this->apiClient);
-            $productInfo->register();
+            return;
         }
+
+        $updater = new PluginUpdater($this->config, $this->apiClient, $this->storage);
+        $updater->register();
+
+        $productInfo = new ProductInfo($this->config, $this->apiClient);
+        $productInfo->register();
     }
 
     /**
      * @return void
-     * @throws \LogicException If product is free.
+     * @throws LogicException If product is free.
      */
     private function requireLicensed()
     {
         if (!empty($this->config['free'])) {
-            throw new \LogicException('License methods are not available for free products.');
+            throw new LogicException('License methods are not available for free products.');
         }
     }
 }
