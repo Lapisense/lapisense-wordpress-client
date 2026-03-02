@@ -120,7 +120,7 @@ final class Client
      * @return bool
      * @throws \LogicException If product is free.
      */
-    public function is_activated()
+    public function isActivated()
     {
         $this->requireLicensed();
         return $this->storage->get('activation_uuid') !== null;
@@ -132,7 +132,7 @@ final class Client
      * @return array<string, mixed>
      * @throws \LogicException If product is free.
      */
-    public function get_activation_status()
+    public function getActivationStatus()
     {
         $this->requireLicensed();
 
