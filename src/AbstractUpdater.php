@@ -122,16 +122,16 @@ abstract class AbstractUpdater
      */
     private function fetchApiResult($currentVersion)
     {
-        if (!empty($this->config['free'])) {
-            return $this->apiClient->checkFreeUpdate($currentVersion);
+        $activationUuid = null;
+
+        if (empty($this->config['free'])) {
+            $activationUuid = $this->storage->get('activation_uuid');
+            if (!$activationUuid) {
+                return null;
+            }
         }
 
-        $activationUuid = $this->storage->get('activation_uuid');
-        if (!$activationUuid) {
-            return null;
-        }
-
-        return $this->apiClient->checkUpdate($activationUuid, $currentVersion);
+        return $this->apiClient->checkUpdate($currentVersion, $activationUuid);
     }
 
     /**
