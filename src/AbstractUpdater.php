@@ -50,11 +50,11 @@ abstract class AbstractUpdater
     }
 
     /**
-     * @param array|false $update
+     * @param array<string, mixed>|false $update
      * @param array<string, mixed> $data
      * @param string $identifier Plugin file or theme stylesheet.
      * @param string[] $locales
-     * @return array|false
+     * @return array<string, mixed>|false
      */
     public function checkUpdate($update, $data, $identifier, $locales)
     {

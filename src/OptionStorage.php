@@ -27,7 +27,7 @@ final class OptionStorage implements StorageInterface
      * @param string $key
      * @return string|null
      */
-    public function get($key)
+    public function get(string $key)
     {
         $value = get_option($this->prefix . $key, null);
         return $value !== null ? (string) $value : null;
@@ -38,7 +38,7 @@ final class OptionStorage implements StorageInterface
      * @param string $value
      * @return void
      */
-    public function set($key, $value)
+    public function set(string $key, string $value)
     {
         update_option($this->prefix . $key, $value, false);
     }
@@ -47,7 +47,7 @@ final class OptionStorage implements StorageInterface
      * @param string $key
      * @return void
      */
-    public function delete($key)
+    public function delete(string $key)
     {
         delete_option($this->prefix . $key);
     }

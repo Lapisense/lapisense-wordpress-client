@@ -17,7 +17,7 @@ final class WpHttpClient implements HttpClientInterface
      * @param array<string, string> $params
      * @return array<string, mixed>|null
      */
-    public function get($url, $params = array())
+    public function get(string $url, $params = array())
     {
         if (!empty($params)) {
             $url = add_query_arg($params, $url);
@@ -35,11 +35,11 @@ final class WpHttpClient implements HttpClientInterface
      * @param array<string, mixed> $body
      * @return array<string, mixed>|null
      */
-    public function post($url, $body)
+    public function post(string $url, $body)
     {
         $response = wp_remote_post($url, array(
             'timeout' => 15,
-            'body'    => wp_json_encode($body),
+            'body'    => (string) wp_json_encode($body),
             'headers' => array(
                 'Content-Type' => 'application/json',
             ),
@@ -53,7 +53,7 @@ final class WpHttpClient implements HttpClientInterface
      * @param array<string, string> $params
      * @return array<string, mixed>|null
      */
-    public function delete($url, $params = array())
+    public function delete(string $url, $params = array())
     {
         if (!empty($params)) {
             $url = add_query_arg($params, $url);
@@ -68,7 +68,7 @@ final class WpHttpClient implements HttpClientInterface
     }
 
     /**
-     * @param array|\WP_Error $response
+     * @param array<string, mixed>|\WP_Error $response
      * @return array<string, mixed>|null
      */
     private function parseResponse($response)
