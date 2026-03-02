@@ -54,6 +54,8 @@ final class PluginUpdater
      * @param string $pluginFile
      * @param string[] $locales
      * @return array|false
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter) $locales is part of the WordPress filter signature.
      */
     public function checkUpdate($update, $pluginData, $pluginFile, $locales)
     {
@@ -92,22 +94,39 @@ final class PluginUpdater
      */
     private function fetchUpdate($currentVersion)
     {
-        $isFree = !empty($this->config['free']);
-
-        if ($isFree) {
-            $result = $this->apiClient->checkFreeUpdate($currentVersion);
-        } else {
-            $activationUuid = $this->storage->get('activation_uuid');
-            if (!$activationUuid) {
-                return null;
-            }
-            $result = $this->apiClient->checkUpdate($activationUuid, $currentVersion);
-        }
+        $result = $this->fetchApiResult($currentVersion);
 
         if (!$result || empty($result['update_available'])) {
             return null;
         }
 
+        return $this->buildUpdateArray($result);
+    }
+
+    /**
+     * @param string $currentVersion
+     * @return array<string, mixed>|null
+     */
+    private function fetchApiResult($currentVersion)
+    {
+        if (!empty($this->config['free'])) {
+            return $this->apiClient->checkFreeUpdate($currentVersion);
+        }
+
+        $activationUuid = $this->storage->get('activation_uuid');
+        if (!$activationUuid) {
+            return null;
+        }
+
+        return $this->apiClient->checkUpdate($activationUuid, $currentVersion);
+    }
+
+    /**
+     * @param array<string, mixed> $result
+     * @return array<string, mixed>
+     */
+    private function buildUpdateArray($result)
+    {
         $pluginFile = plugin_basename($this->config['file']);
 
         return array(

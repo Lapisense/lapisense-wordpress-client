@@ -53,6 +53,8 @@ final class ThemeUpdater
      * @param string $themeStylesheet
      * @param string[] $locales
      * @return array|false
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter) $locales is part of the WordPress filter signature.
      */
     public function checkUpdate($update, $themeData, $themeStylesheet, $locales)
     {
@@ -87,22 +89,39 @@ final class ThemeUpdater
      */
     private function fetchUpdate($currentVersion)
     {
-        $isFree = !empty($this->config['free']);
-
-        if ($isFree) {
-            $result = $this->apiClient->checkFreeUpdate($currentVersion);
-        } else {
-            $activationUuid = $this->storage->get('activation_uuid');
-            if (!$activationUuid) {
-                return null;
-            }
-            $result = $this->apiClient->checkUpdate($activationUuid, $currentVersion);
-        }
+        $result = $this->fetchApiResult($currentVersion);
 
         if (!$result || empty($result['update_available'])) {
             return null;
         }
 
+        return $this->buildUpdateArray($result);
+    }
+
+    /**
+     * @param string $currentVersion
+     * @return array<string, mixed>|null
+     */
+    private function fetchApiResult($currentVersion)
+    {
+        if (!empty($this->config['free'])) {
+            return $this->apiClient->checkFreeUpdate($currentVersion);
+        }
+
+        $activationUuid = $this->storage->get('activation_uuid');
+        if (!$activationUuid) {
+            return null;
+        }
+
+        return $this->apiClient->checkUpdate($activationUuid, $currentVersion);
+    }
+
+    /**
+     * @param array<string, mixed> $result
+     * @return array<string, mixed>
+     */
+    private function buildUpdateArray($result)
+    {
         $themeDir = isset($this->config['file']) ? dirname($this->config['file']) : '';
         $themeSlug = basename($themeDir);
 

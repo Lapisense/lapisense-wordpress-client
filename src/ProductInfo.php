@@ -3,6 +3,7 @@
 namespace Lapisense\WordPressClient;
 
 use Lapisense\PHPClient\ApiClient;
+use stdClass;
 
 /**
  * Plugin information modal integration via plugins_api filter.
@@ -37,10 +38,10 @@ final class ProductInfo
     }
 
     /**
-     * @param false|object|\stdClass $result
+     * @param false|object|stdClass $result
      * @param string $action
      * @param object $args
-     * @return false|object|\stdClass
+     * @return false|object|stdClass
      */
     public function filterPluginsApi($result, $action, $args)
     {
@@ -60,19 +61,41 @@ final class ProductInfo
             return $result;
         }
 
-        $response = new \stdClass();
-        $response->name = isset($info['name']) ? $info['name'] : '';
+        return $this->buildPluginInfoResponse($info, $slug);
+    }
+
+    /**
+     * @param array<string, mixed> $info
+     * @param string $slug
+     * @return stdClass
+     */
+    private function buildPluginInfoResponse($info, $slug)
+    {
+        $defaults = array(
+            'name'         => '',
+            'version'      => '',
+            'homepage'     => '',
+            'requires_wp'  => '',
+            'tested_wp'    => '',
+            'requires_php' => '',
+            'description'  => '',
+            'changelog'    => '',
+        );
+        $info = array_merge($defaults, $info);
+
+        $response = new stdClass();
+        $response->name = $info['name'];
         $response->slug = $slug;
-        $response->version = isset($info['version']) ? $info['version'] : '';
+        $response->version = $info['version'];
         $response->author = '';
-        $response->homepage = isset($info['homepage']) ? $info['homepage'] : '';
-        $response->requires = isset($info['requires_wp']) ? $info['requires_wp'] : '';
-        $response->tested = isset($info['tested_wp']) ? $info['tested_wp'] : '';
-        $response->requires_php = isset($info['requires_php']) ? $info['requires_php'] : '';
+        $response->homepage = $info['homepage'];
+        $response->requires = $info['requires_wp'];
+        $response->tested = $info['tested_wp'];
+        $response->requires_php = $info['requires_php'];
 
         $response->sections = array(
-            'description' => isset($info['description']) ? $info['description'] : '',
-            'changelog'   => isset($info['changelog']) ? $info['changelog'] : '',
+            'description' => $info['description'],
+            'changelog'   => $info['changelog'],
         );
 
         return $response;
