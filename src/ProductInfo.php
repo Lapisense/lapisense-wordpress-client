@@ -72,14 +72,20 @@ final class ProductInfo
     private function buildPluginInfoResponse($info, $slug)
     {
         $defaults = array(
-            'name'         => '',
-            'version'      => '',
-            'homepage'     => '',
-            'requires_wp'  => '',
-            'tested_wp'    => '',
-            'requires_php' => '',
-            'description'  => '',
-            'changelog'    => '',
+            'name'          => '',
+            'version'       => '',
+            'author'        => '',
+            'homepage'      => '',
+            'download_link' => null,
+            'last_updated'  => '',
+            'requires'      => '',
+            'tested'        => '',
+            'requires_php'  => '',
+            'sections'      => array(
+                'description' => '',
+                'changelog'   => '',
+            ),
+            'banners'       => array(),
         );
         $info = array_merge($defaults, $info);
 
@@ -87,15 +93,19 @@ final class ProductInfo
         $response->name = $info['name'];
         $response->slug = $slug;
         $response->version = $info['version'];
-        $response->author = '';
+        $response->author = $info['author'];
         $response->homepage = $info['homepage'];
-        $response->requires = $info['requires_wp'];
-        $response->tested = $info['tested_wp'];
+        $response->download_link = $info['download_link'];
+        $response->last_updated = $info['last_updated'];
+        $response->requires = $info['requires'];
+        $response->tested = $info['tested'];
         $response->requires_php = $info['requires_php'];
+        $response->banners = $info['banners'];
 
-        $response->sections = array(
-            'description' => $info['description'],
-            'changelog'   => $info['changelog'],
+        $sections = $info['sections'];
+        $response->sections = is_array($sections) ? $sections : array(
+            'description' => '',
+            'changelog'   => '',
         );
 
         return $response;
