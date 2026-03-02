@@ -1,0 +1,62 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  quality:
+    name: Quality
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup Docker buildx
+        uses: docker/setup-buildx-action@v3
+      - uses: actions/checkout@v4
+      - name: Build Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: "{{defaultContext}}"
+          target: develop
+          push: false
+          load: true
+          tags: wordpress-client:latest
+          cache-from: type=gha,scope=default
+          cache-to: type=gha,mode=min,scope=default
+      - name: Lint (PHPCS)
+        run: docker compose run --rm actions-tester composer lint
+      - name: Static analysis (PHPStan)
+        run: docker compose run --rm actions-tester composer analyse
+      - name: Mess detection (PHPMD)
+        run: docker compose run --rm actions-tester composer mess
+      - name: Tests with coverage enforcement
+        run: docker compose run --rm actions-tester composer test:coverage-enforce
+
+  test:
+    name: Test (PHP ${{ matrix.php }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ['7.4', '8.0', '8.1', '8.2', '8.3', '8.4', '8.5']
+    steps:
+      - name: Setup Docker buildx
+        uses: docker/setup-buildx-action@v3
+      - uses: actions/checkout@v4
+      - name: Build Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: "{{defaultContext}}"
+          target: builder
+          push: false
+          load: true
+          tags: wordpress-client:latest
+          build-args: |
+            PHP_VERSION=${{ matrix.php }}
+          cache-from: type=gha,scope=php-${{ matrix.php }}
+          cache-to: type=gha,mode=min,scope=php-${{ matrix.php }}
+      - name: Run tests
+        run: docker compose run --rm actions-tester composer test
