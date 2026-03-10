@@ -4,7 +4,6 @@ namespace Lapisense\WordPressClient\Tests\Unit;
 
 use Brain\Monkey\Functions;
 use Lapisense\WordPressClient\Client;
-use LogicException;
 
 /**
  * @covers \Lapisense\WordPressClient\Client
@@ -34,54 +33,6 @@ class ClientTest extends TestCase
             }
             return basename(dirname($file)) . '/' . basename($file);
         });
-    }
-
-    public function testActivateThrowsForFreeProduct(): void
-    {
-        $this->stubInitFunctions();
-
-        $config = array_merge($this->baseConfig, array('free' => true));
-        $client = Client::init($config);
-
-        $this->expectException(LogicException::class);
-        $this->expectExceptionMessage('License methods are not available for free products.');
-        $client->activate('ABCD-1234');
-    }
-
-    public function testDeactivateThrowsForFreeProduct(): void
-    {
-        $this->stubInitFunctions();
-
-        $config = array_merge($this->baseConfig, array('free' => true));
-        $client = Client::init($config);
-
-        $this->expectException(LogicException::class);
-        $this->expectExceptionMessage('License methods are not available for free products.');
-        $client->deactivate();
-    }
-
-    public function testIsActivatedThrowsForFreeProduct(): void
-    {
-        $this->stubInitFunctions();
-
-        $config = array_merge($this->baseConfig, array('free' => true));
-        $client = Client::init($config);
-
-        $this->expectException(LogicException::class);
-        $this->expectExceptionMessage('License methods are not available for free products.');
-        $client->isActivated();
-    }
-
-    public function testGetActivationStatusThrowsForFreeProduct(): void
-    {
-        $this->stubInitFunctions();
-
-        $config = array_merge($this->baseConfig, array('free' => true));
-        $client = Client::init($config);
-
-        $this->expectException(LogicException::class);
-        $this->expectExceptionMessage('License methods are not available for free products.');
-        $client->getActivationStatus();
     }
 
     public function testInitWithPluginTypeRegistersPluginFilter(): void

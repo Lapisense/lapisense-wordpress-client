@@ -32,7 +32,6 @@ class PluginUpdaterTest extends TestCase
             'store_url'    => $this->storeUrl,
             'product_uuid' => $this->productUuid,
             'file'         => $this->pluginFile,
-            'free'         => false,
         ), $overrides);
     }
 
@@ -267,37 +266,9 @@ class PluginUpdaterTest extends TestCase
         $this->assertSame('5.8', $result['requires']);
     }
 
-    public function testCheckUpdateSkipsApiWhenNoActivationUuid(): void
+    public function testCheckUpdateProceedsWithoutActivationUuid(): void
     {
         list($updater, $httpClient, $storage) = $this->makeUpdater();
-
-        Functions\expect('plugin_basename')
-            ->with($this->pluginFile)
-            ->andReturn('my-plugin/my-plugin.php');
-
-        Functions\expect('get_transient')->once()->andReturn(false);
-
-        $storage->method('get')
-            ->with('activation_uuid')
-            ->willReturn(null);
-
-        $httpClient->expects($this->never())->method('get');
-
-        Functions\expect('set_transient')->once();
-
-        $result = $updater->checkUpdate(
-            false,
-            array('Version' => '1.0.0'),
-            'my-plugin/my-plugin.php',
-            array()
-        );
-
-        $this->assertFalse($result);
-    }
-
-    public function testCheckUpdateCallsApiWithoutUuidForFreeProduct(): void
-    {
-        list($updater, $httpClient, $storage) = $this->makeUpdater(array('free' => true));
 
         $apiResponse = array(
             'update_available' => true,
@@ -315,7 +286,9 @@ class PluginUpdaterTest extends TestCase
 
         Functions\expect('get_transient')->once()->andReturn(false);
 
-        $storage->expects($this->never())->method('get');
+        $storage->method('get')
+            ->with('activation_uuid')
+            ->willReturn(null);
 
         $httpClient->expects($this->once())
             ->method('get')
