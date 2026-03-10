@@ -30,15 +30,6 @@ $lapisense->activate($licenseKey);
 $lapisense->deactivate();
 $lapisense->isActivated();
 $lapisense->getActivationStatus();
-
-// Free product (no license required)
-$lapisense = Client::init([
-    'store_url'    => 'https://store.example.com',
-    'product_uuid' => 'f47ac10b-58cc-4372-a567-0e02b2c3d479',
-    'product_type' => 'plugin',
-    'file'         => __FILE__,
-    'free'         => true,
-]);
 ```
 
 ## License

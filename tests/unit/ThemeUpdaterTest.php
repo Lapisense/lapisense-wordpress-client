@@ -31,7 +31,6 @@ class ThemeUpdaterTest extends TestCase
             'store_url'    => $this->storeUrl,
             'product_uuid' => $this->productUuid,
             'file'         => $this->themeFile,
-            'free'         => false,
         ), $overrides);
     }
 
