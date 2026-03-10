@@ -3,7 +3,6 @@
 namespace Lapisense\WordPressClient;
 
 use Lapisense\PHPClient\ApiClient;
-use LogicException;
 
 /**
  * Developer-facing entry point for the Lapisense WordPress client.
@@ -17,7 +16,6 @@ use LogicException;
  *       'product_uuid' => 'f47ac10b-58cc-4372-a567-0e02b2c3d479',
  *       'product_type' => 'plugin',
  *       'file'         => __FILE__,
- *       'free'         => true,
  *   ]);
  */
 final class Client
@@ -50,16 +48,11 @@ final class Client
      *     @type string $product_uuid Product UUID.
      *     @type string $product_type 'plugin' or 'theme'.
      *     @type string $file         Main plugin/theme file path.
-     *     @type bool   $free         Whether this is a free product (default false).
      * }
      * @return self
      */
     public static function init($config)
     {
-        $config = array_merge(array(
-            'free' => false,
-        ), $config);
-
         $instance = new self($config);
         $instance->registerHooks();
 
@@ -71,12 +64,9 @@ final class Client
      *
      * @param string $licenseKey
      * @return array<string, mixed>
-     * @throws LogicException If product is free.
      */
     public function activate($licenseKey)
     {
-        $this->requireLicensed();
-
         $result = $this->apiClient->activate($licenseKey, home_url());
 
         if ($result && !empty($result['success']) && !empty($result['activation']['uuid'])) {
@@ -90,12 +80,9 @@ final class Client
      * Deactivate the current activation.
      *
      * @return bool
-     * @throws LogicException If product is free.
      */
     public function deactivate()
     {
-        $this->requireLicensed();
-
         $activationUuid = $this->storage->getActivationUuid();
         if (!$activationUuid) {
             return false;
@@ -115,11 +102,9 @@ final class Client
      * Check if a license is activated.
      *
      * @return bool
-     * @throws LogicException If product is free.
      */
     public function isActivated()
     {
-        $this->requireLicensed();
         return $this->storage->getActivationUuid() !== null;
     }
 
@@ -127,12 +112,9 @@ final class Client
      * Get the current activation status.
      *
      * @return array<string, mixed>
-     * @throws LogicException If product is free.
      */
     public function getActivationStatus()
     {
-        $this->requireLicensed();
-
         return array(
             'activated'       => $this->storage->getActivationUuid() !== null,
             'activation_uuid' => $this->storage->getActivationUuid(),
@@ -160,16 +142,5 @@ final class Client
 
         $productInfo = new ProductInfo($this->config, $this->apiClient);
         $productInfo->register();
-    }
-
-    /**
-     * @return void
-     * @throws LogicException If product is free.
-     */
-    private function requireLicensed()
-    {
-        if (!empty($this->config['free'])) {
-            throw new LogicException('License methods are not available for free products.');
-        }
     }
 }
