@@ -47,15 +47,16 @@ final class PluginUpdater extends AbstractUpdater
     protected function buildUpdateArray($result)
     {
         $pluginFile = plugin_basename($this->config['file']);
+        $requirements = isset($result['requirements']) ? $result['requirements'] : array();
 
         return array(
             'slug'         => dirname($pluginFile),
             'version'      => isset($result['version']) ? $result['version'] : '',
             'url'          => isset($result['homepage']) ? $result['homepage'] : '',
             'package'      => isset($result['package_url']) ? $result['package_url'] : '',
-            'tested'       => isset($result['tested_wp']) ? $result['tested_wp'] : '',
-            'requires_php' => isset($result['requires_php']) ? $result['requires_php'] : '',
-            'requires'     => isset($result['requires_wp']) ? $result['requires_wp'] : '',
+            'tested'       => isset($requirements['tested_wp']) ? $requirements['tested_wp'] : '',
+            'requires_php' => isset($requirements['requires_php']) ? $requirements['requires_php'] : '',
+            'requires'     => isset($requirements['requires_wp']) ? $requirements['requires_wp'] : '',
         );
     }
 }

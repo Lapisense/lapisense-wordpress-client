@@ -117,8 +117,10 @@ class ThemeUpdaterTest extends TestCase
             'version'          => '3.0.0',
             'homepage'         => 'https://example.com/theme',
             'package_url'      => 'https://store.example.com/download/3.0.0',
-            'requires_wp'      => '6.0',
-            'requires_php'     => '7.4',
+            'requirements'     => array(
+                'requires_wp'  => '6.0',
+                'requires_php' => '7.4',
+            ),
         );
 
         Functions\expect('get_transient')->once()->andReturn(false);

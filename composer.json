@@ -5,7 +5,7 @@
     "license": "GPL-2.0-or-later",
     "require": {
         "php": ">=7.4",
-        "lapisense/php-client": "^0.2 || ^1.0"
+        "lapisense/php-client": "^0.3"
     },
     "autoload": {
         "psr-4": {

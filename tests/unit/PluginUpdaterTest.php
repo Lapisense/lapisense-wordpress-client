@@ -151,9 +151,11 @@ class PluginUpdaterTest extends TestCase
             'version'          => '2.0.0',
             'homepage'         => 'https://example.com',
             'package_url'      => 'https://store.example.com/download/2.0.0',
-            'tested_wp'        => '6.4',
-            'requires_php'     => '7.4',
-            'requires_wp'      => '5.8',
+            'requirements'     => array(
+                'tested_wp'    => '6.4',
+                'requires_php' => '7.4',
+                'requires_wp'  => '5.8',
+            ),
         );
 
         Functions\expect('plugin_basename')
@@ -228,9 +230,11 @@ class PluginUpdaterTest extends TestCase
             'version'          => '2.0.0',
             'homepage'         => 'https://example.com',
             'package_url'      => 'https://store.example.com/download/2.0.0',
-            'tested_wp'        => '6.4',
-            'requires_php'     => '7.4',
-            'requires_wp'      => '5.8',
+            'requirements'     => array(
+                'tested_wp'    => '6.4',
+                'requires_php' => '7.4',
+                'requires_wp'  => '5.8',
+            ),
         );
 
         Functions\expect('plugin_basename')
@@ -275,9 +279,11 @@ class PluginUpdaterTest extends TestCase
             'version'          => '2.0.0',
             'homepage'         => 'https://example.com',
             'package_url'      => 'https://store.example.com/download/2.0.0',
-            'tested_wp'        => '6.4',
-            'requires_php'     => '7.4',
-            'requires_wp'      => '5.8',
+            'requirements'     => array(
+                'tested_wp'    => '6.4',
+                'requires_php' => '7.4',
+                'requires_wp'  => '5.8',
+            ),
         );
 
         Functions\expect('plugin_basename')

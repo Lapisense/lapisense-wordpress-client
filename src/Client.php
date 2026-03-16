@@ -67,7 +67,7 @@ final class Client
      */
     public function activate($licenseKey)
     {
-        $result = $this->apiClient->activate($licenseKey, home_url());
+        $result = $this->apiClient->activate($licenseKey, home_url(), 'site_url');
 
         if ($result && !empty($result['success']) && !empty($result['activation']['uuid'])) {
             $this->storage->store($licenseKey, $result['activation']['uuid']);
